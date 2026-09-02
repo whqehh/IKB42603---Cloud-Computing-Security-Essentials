@@ -67,8 +67,9 @@ aws $EP logs create-log-stream --log-group-name /ccse/app --log-stream-name auth
     },
     "version": "2.3.0"
 }
-```
 
+```
+<img width="1050" height="359" alt="image" src="https://github.com/user-attachments/assets/46c38a65-a484-4c94-9a94-c1af22aae439" />
 ---
 
 ## Task 1: Generate Application Logs
@@ -115,6 +116,8 @@ The log contains:
 - **1 data export** (500MB by admin)
 - **Total unique IPs**: 2 (10.0.0.5 and 203.0.113.9)
 
+<img width="894" height="723" alt="image" src="https://github.com/user-attachments/assets/6a218599-e523-44cf-9c35-4055ed20685a" />
+
 ---
 
 ## Task 2: Centralise Logs to CloudWatch
@@ -151,6 +154,8 @@ aws $EP logs get-log-events --log-group-name /ccse/app --log-stream-name auth \
 - Logs are centralised, not scattered on individual hosts
 - CloudWatch provides a single source of truth for all authentication events
 
+<img width="1050" height="280" alt="image" src="https://github.com/user-attachments/assets/01096ad2-cb6a-4be4-83e0-883330f0af6e" />
+
 ---
 
 ## Task 3: Query Security-Relevant Activity
@@ -185,6 +190,8 @@ IP: ip=203.0.113.9 | User: user=admin | Time: 2025-03-01 09:01:12
 IP: ip=203.0.113.9 | User: user=admin | Time: 2025-03-01 09:01:15
 IP: ip=203.0.113.9 | User: user=admin | Time: 2025-03-01 09:01:18
 ```
+
+<img width="969" height="204" alt="image" src="https://github.com/user-attachments/assets/516a135e-8718-461e-8778-4b124a88821a" />
 
 **Total Failed Logins:** 4
 
@@ -264,6 +271,9 @@ auth.chain (7 lines with hashes)
 - Tampered final hash: `f6e5d4c3b2a10987...` (different)
 - **Conclusion:** Any change to the log breaks the chain and is immediately detectable
 
+<img width="1050" height="471" alt="image" src="https://github.com/user-attachments/assets/de692b7f-8c64-4714-a8c3-2ff173965851" />
+<img width="1050" height="957" alt="image" src="https://github.com/user-attachments/assets/3a106837-d0f2-4468-8b8a-37e4c22bc619" />
+
 ---
 
 ## Task 5: Detect Incident through Correlation
@@ -313,6 +323,7 @@ ALERT: probable brute-force -> compromise -> data exfiltration
 IP=203.0.113.9 fails=4 success=1 export=1
 ALERT: probable brute-force -> compromise -> data exfiltration
 ```
+<img width="919" height="333" alt="image" src="https://github.com/user-attachments/assets/43487dcc-d61a-4c4c-9849-7218eb3202c9" />
 
 ---
 
@@ -449,7 +460,8 @@ iptables -A INPUT -s 203.0.113.9 -j DROP
 ```
 0adc5d2ac06cbbdd366099bcc0540c4c0f76946e71b52e4c99322731696a203b  evidence_20260903.log
 ```
-
+<img width="1050" height="405" alt="image" src="https://github.com/user-attachments/assets/7a22df12-d024-4726-adba-28d67a418275" />
+<img width="1050" height="378" alt="image" src="https://github.com/user-attachments/assets/d0cff082-f7e9-4ed2-9632-cd474de81f6a" />
 ---
 
 ## Incident Report
@@ -696,7 +708,7 @@ rm -f auth.log auth.chain auth.tampered auth.tampered.chain evidence_*.log evide
 # Stop and remove LocalStack
 docker stop localstack && docker rm localstack
 ```
-
+<img width="896" height="163" alt="image" src="https://github.com/user-attachments/assets/a0c69192-9c66-4502-959b-f9bda3002baa" />
 ---
 
 ## References
