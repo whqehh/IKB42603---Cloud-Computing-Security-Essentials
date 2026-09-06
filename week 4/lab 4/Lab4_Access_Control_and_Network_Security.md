@@ -23,6 +23,7 @@
 4. [Short-Answer Questions](#short-answer-questions)
 5. [Security Checklist](#security-best-practices-checklist)
 6. [References](#references)
+7. [Evidence](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%204/lab%204/lab%204%20Evidence.pdf)
 
 ---
 
