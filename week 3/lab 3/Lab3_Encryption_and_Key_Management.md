@@ -8,6 +8,7 @@
 5. [Verification & Validation](#verification--validation)
 6. [Cleanup](#cleanup)
 7. [Evidence Summary](#evidence-summary)
+8. [Lab Evidence](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%203/lab%203/Lab%203%20Evidence.pdf)
 
 ---
 
