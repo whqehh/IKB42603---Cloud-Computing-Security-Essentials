@@ -2,8 +2,8 @@
 
 ## Lab 5: Monitoring, Logging & Incident Detection
 
-**Student Name:** [Your Name]  
-**Student ID:** [Your ID]  
+**Student Name:** Nureen Farhah binti Azmal
+**Student ID:** 52215125191 
 **Date:** September 3, 2026  
 **Course:** IKB42603 - Cloud Security Operations
 
@@ -23,6 +23,7 @@
 11. [Short-Answer Questions](#short-answer-questions)
 12. [Security Best-Practices Checklist](#security-best-practices-checklist)
 13. [References](#references)
+14. [Lab Evidence](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%205/lab%205/lab%205%20evidence.pdf)
 
 ---
 
