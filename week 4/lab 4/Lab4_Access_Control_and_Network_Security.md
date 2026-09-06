@@ -463,6 +463,7 @@ uid=1000 gid=1000 groups=1000
 docker run --rm aquasec/trivy image --severity HIGH,CRITICAL nginx:alpine | head -20
 ```
 <img width="938" height="590" alt="image" src="https://github.com/user-attachments/assets/bc55916a-f2da-4476-b5e8-50301b040fbd" />
+<img width="817" height="614" alt="image" src="https://github.com/user-attachments/assets/4d760d7f-7a91-4fd5-9d14-04b46a3ca2f2" />
 
 **Note:** Scan requires internet connection. The hardening is still verified and working.
 
@@ -624,6 +625,7 @@ kubectl get rolebinding dev-rb -n app -o yaml
 # Task 6 - Container Hardening
 docker inspect hardened --format '{{json .HostConfig.CapDrop}}'
 ```
+<img width="602" height="415" alt="image" src="https://github.com/user-attachments/assets/097f46ae-2202-4328-9b27-2a949da7d86f" />
 
 ---
 
@@ -649,6 +651,7 @@ docker network rm frontend-net backend-net 2>/dev/null
 # Delete Kubernetes cluster
 kind delete cluster --name ccse-lab4
 ```
+<img width="562" height="272" alt="image" src="https://github.com/user-attachments/assets/688cf934-0c99-4536-930b-a97d46e5d27d" />
 
 ---
 
