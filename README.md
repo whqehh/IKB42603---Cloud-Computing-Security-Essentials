@@ -6,4 +6,4 @@ This repository contains all laboratory exercises completed throughout the cours
 Course: IKB42603 - Cloud Computing Security Essentials
 Student: Nureen Azmal 
 Instructor: Ts. Adani Kamal
-Semester: <Sem 2 / Year 4>
+Semester: <Sem 3 / Year 2>
