@@ -115,7 +115,7 @@ curl -s -u student:'m3l0n!' -o /dev/null -w 'valid-creds: %{http_code}\n' http:/
 
 **Output:**
 
-<img width="834" height="184" alt="image" src="https://github.com/user-attachments/assets/881c1602-74cf-42ad-8c3d-feff94a2c1f2" />
+<img width="732" height="93" alt="image" src="https://github.com/user-attachments/assets/79fabce7-b1fa-4b0c-bf96-e157790655fb" />
 
 **Test 3: Valid credentials showing content**
 
