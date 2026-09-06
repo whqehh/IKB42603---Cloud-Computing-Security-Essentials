@@ -13,6 +13,7 @@
 4. [Deliverables](#deliverables)
 5. [Verification Commands](#verification)
 6. [Cleanup](#cleanup)
+7. [Evidence](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%202/Lab%202%20Evidence.pdf)
 
 ---
 
