@@ -79,6 +79,7 @@ This lab serves as the foundation for understanding cloud security's first line 
 - Design systems with security as a foundational principle rather than an afterthought
 ---
 
+[Lab Evidence](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%201/lab%201%20evidence.pdf)
 ## Session A: Cloud Identity with LocalStack
 
 ### Environment Setup Verification
