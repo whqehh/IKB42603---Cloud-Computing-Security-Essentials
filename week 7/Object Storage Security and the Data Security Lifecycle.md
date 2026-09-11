@@ -23,14 +23,13 @@
    - [Task 6 — Delegated Access and the Condition-Key Trap](#task-6--delegated-access-and-the-condition-key-trap)
    - [Task 7 — Versioning, Delete Markers & Data Remanence](#task-7--versioning-delete-markers--data-remanence)
    - [Task 8 — Lifecycle Rules & Cryptographic Erasure](#task-8--lifecycle-rules--cryptographic-erasure)
-5. [Evidence Folder — Screenshots & Outputs](#5-evidence-folder--screenshots--outputs)
-6. [Data Classification Table](#6-data-classification-table)
-7. [Short-Answer Questions](#7-short-answer-questions)
-8. [Verification Command Output](#8-verification-command-output)
-9. [Security Best-Practices Checklist](#9-security-best-practices-checklist)
-10. [Cleanup & Teardown](#10-cleanup--teardown)
-11. [Reflection & Lessons Learned](#11-reflection--lessons-learned)
-12. [Evidence]()
+5. [Data Classification Table](#6-data-classification-table)
+6. [Short-Answer Questions](#7-short-answer-questions)
+7. [Verification Command Output](#8-verification-command-output)
+8. [Security Best-Practices Checklist](#9-security-best-practices-checklist)
+9. [Reflection & Lessons Learned](#11-reflection--lessons-learned)
+10. [Lab 2.1]()
+11. [Lab 5.1]()
 
 ---
 
@@ -57,6 +56,8 @@ docker run -d --name localstack -p 4566:4566 \
   -e ENFORCE_IAM=1 \
   localstack/localstack-pro:latest
 ```
+<img width="541" height="138" alt="image" src="https://github.com/user-attachments/assets/4911f5f3-9168-4de9-a462-4148e6157aa6" />
+<img width="840" height="169" alt="image" src="https://github.com/user-attachments/assets/209eec1d-d099-47c5-b55e-6c5e003da72c" />
 
 ### 2.2 Point the CLI at LocalStack
 
@@ -68,15 +69,9 @@ aws configure set region us-east-1
 aws $EP sts get-caller-identity
 ```
 
-**Expected output:**
+**output:**
+<img width="839" height="333" alt="image" src="https://github.com/user-attachments/assets/62c2875c-d8e8-40e1-9272-7d96f5fae118" />
 
-```json
-{
-    "UserId": "AKIAIOSFODNN7EXAMPLE",
-    "Account": "000000000000",
-    "Arn": "arn:aws:iam::000000000000:user/test"
-}
-```
 
 > **Note:** Record the account number `000000000000` — this is needed for the ARNs written in Task 4.
 
@@ -87,13 +82,9 @@ export BUCKET="mii-patient-records-7615"
 aws $EP s3api create-bucket --bucket $BUCKET
 ```
 
-**Expected output:**
+**output:**
+<img width="675" height="123" alt="image" src="https://github.com/user-attachments/assets/8fbc9d10-c10e-4990-b002-46aa09f8762c" />
 
-```json
-{
-    "Location": "/mii-patient-records-7615"
-}
-```
 
 ---
 
@@ -135,18 +126,6 @@ aws $EP s3api list-objects-v2 --bucket $BUCKET \
   --query 'Contents[].[Key,Size]' --output table
 ```
 
-**Output:**
-
-```
------------------------------------
-|          ListObjectsV2          |
-+----------------------+----------+
-|  confidential/record.txt |  48  |
-|  internal/roster.txt     |  29  |
-|  public/notice.txt       |  27  |
-+----------------------+----------+
-```
-
 #### Step 1.4 — Verify the confidential tag
 
 ```bash
@@ -155,40 +134,8 @@ aws $EP s3api get-object-tagging --bucket $BUCKET --key confidential/record.txt
 
 **Output:**
 
-```json
-{
-    "TagSet": [
-        {
-            "Key": "classification",
-            "Value": "confidential"
-        }
-    ]
-}
-```
-
-#### Step 1.5 — Record the encryption state
-
-```bash
-aws $EP s3api head-object --bucket $BUCKET --key confidential/record.txt \
-  --query '[ServerSideEncryption, SSEKMSKeyId, BucketKeyEnabled]' --output text
-```
-
-**Output:**
-
-```
-AES256
-```
-
-> **Note:** At this stage, only S3-managed encryption (AES256) is applied by default. Task 5 will upgrade this to SSE-KMS.
-
-#### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task1-list-objects.png` | `list-objects-v2` table showing all three objects |
-| `task1-confidential-tag.png` | `get-object-tagging` showing `classification=confidential` |
-
-> **Key insight:** A prefix such as `confidential/` is **not a folder** — object storage has a flat namespace and the slash is just part of the key. Policies grant access by key prefix, which is why a sloppy prefix such as `*` exposes everything at once.
+<img width="974" height="465" alt="image" src="https://github.com/user-attachments/assets/f7b173d2-d1fb-494e-8981-6657159144f5" />
+<img width="1134" height="921" alt="image" src="https://github.com/user-attachments/assets/b52a0042-282b-4644-a8d4-af73be074f64" />
 
 ---
 
@@ -222,6 +169,8 @@ aws $EP s3api put-bucket-policy --bucket $BUCKET --policy file://public-policy.j
 aws $EP s3api get-bucket-policy --bucket $BUCKET --query Policy --output text
 ```
 
+<img width="753" height="796" alt="image" src="https://github.com/user-attachments/assets/99a49ae6-3c30-4ccf-a1c9-d7fc988a73e5" />
+
 #### Step 2.3 — The attacker's view: no AWS credentials, no CLI, just a URL
 
 ```bash
@@ -232,18 +181,8 @@ cat leaked.txt
 ```
 
 **Output:**
+<img width="803" height="226" alt="image" src="https://github.com/user-attachments/assets/d85e905b-08c5-44d5-9a0a-3e45a133e56e" />
 
-```
-HTTP 200
-Patient: Ahmad bin Ali, Diagnosis: confidential
-```
-
-#### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task2-public-policy.png` | The `public-policy.json` with `Principal: "*"` |
-| `task2-leaked-record.png` | `curl` returning HTTP 200 and the leaked patient record |
 
 > **Caution:** HTTP 200 and the patient record printed in the terminal is the **whole breach**. There was no exploit, no malware and no vulnerability — only a policy that said `Principal: "*"`.
 
@@ -277,19 +216,6 @@ aws $EP s3api put-public-access-block --bucket $BUCKET \
 aws $EP s3api get-public-access-block --bucket $BUCKET
 ```
 
-**Expected output:**
-
-```json
-{
-    "PublicAccessBlockConfiguration": {
-        "BlockPublicAcls": true,
-        "IgnorePublicAcls": true,
-        "BlockPublicPolicy": true,
-        "RestrictPublicBuckets": true
-    }
-}
-```
-
 #### Step 3.4 — Try to re-introduce the public policy
 
 ```bash
@@ -308,11 +234,8 @@ curl -s -o /dev/null -w 'anonymous read after BPA: HTTP %{http_code}\n' \
 **On real AWS:** HTTP 403 (Access Denied). **On LocalStack:** may still return HTTP 200.
 
 #### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task3-bpa-config.png` | `get-public-access-block` showing all four flags `true` |
-| `task3-retest.png` | Re-tested anonymous read (HTTP 403 on real AWS, or HTTP 200 on LocalStack with explanation) |
+<img width="753" height="796" alt="image" src="https://github.com/user-attachments/assets/638751e6-85a9-4275-86a3-cbcfae765523" />
+<img width="803" height="226" alt="image" src="https://github.com/user-attachments/assets/889af6fa-a1fa-48c3-a311-bcc60be330d7" />
 
 **Report answers:**
 
@@ -419,20 +342,11 @@ AWS_PROFILE=analyst aws $EP s3api get-object \
   || echo "confidential: DENIED"
 ```
 
-**Expected output:**
-
-```
-An error occurred (AccessDenied) when calling the GetObject operation: Access Denied
-confidential: DENIED
-```
-
 #### Evidence
 
-| Screenshot | Description |
-|---|---|
-| `task4-analyst-iam.png` | The analyst's IAM policy allowing `s3:GetObject` on `*` |
-| `task4-internal-allowed.png` | Internal object successfully retrieved |
-| `task4-confidential-denied.png` | Confidential object denied by bucket policy |
+<img width="865" height="850" alt="image" src="https://github.com/user-attachments/assets/f2e536ab-13b5-4627-9166-208a475ab207" />
+<img width="951" height="884" alt="image" src="https://github.com/user-attachments/assets/b8902b34-1e98-4490-9460-e1c6117ac302" />
+<img width="701" height="625" alt="image" src="https://github.com/user-attachments/assets/ce992f89-21c7-4763-acac-799af88d2085" />
 
 > **Verify or explain:** If LocalStack was not started with `ENFORCE_IAM=1`, both calls will succeed. Restart the container with the flag and retry. If it still does not deny, record both policy documents as evidence and write out the evaluation logic yourself: **default deny → any explicit Deny → any explicit Allow**. State which statement decides each of the two requests.
 
@@ -505,24 +419,6 @@ aws $EP s3api put-bucket-encryption --bucket $BUCKET \
 aws $EP s3api get-bucket-encryption --bucket $BUCKET
 ```
 
-**Expected output:**
-
-```json
-{
-    "ServerSideEncryptionConfiguration": {
-        "Rules": [
-            {
-                "ApplyServerSideEncryptionByDefault": {
-                    "SSEAlgorithm": "aws:kms",
-                    "KMSMasterKeyID": "arn:aws:kms:us-east-1:000000000000:key/71c6076a-f1eb-4a49-b198-26b10660c9d8"
-                },
-                "BucketKeyEnabled": true
-            }
-        ]
-    }
-}
-```
-
 #### Step 5.4 — Upload with NO encryption flags at all
 
 ```bash
@@ -537,18 +433,8 @@ aws $EP s3api head-object --bucket $BUCKET --key confidential/record-v2.txt \
   --query '[ServerSideEncryption, SSEKMSKeyId, BucketKeyEnabled]' --output text
 ```
 
-**Output:**
-
-```
-aws:kms    arn:aws:kms:us-east-1:000000000000:key/71c6076a-f1eb-4a49-b198-26b10660c9d8    True
-```
-
 #### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task5-bucket-encryption.png` | `get-bucket-encryption` showing `aws:kms` and the key ID |
-| `task5-head-object.png` | `head-object` showing `aws:kms`, key ARN, and `BucketKeyEnabled=True` |
+<img width="966" height="703" alt="image" src="https://github.com/user-attachments/assets/23f13eb1-a0fb-4af6-979d-6eaf313bc45b" />
 
 > **Key insight:** The upload succeeded **without any encryption flags**. The bucket applied the KMS key automatically. This is the difference between a control that depends on developer discipline and a control that is a property of the bucket itself.
 
@@ -563,12 +449,8 @@ aws:kms    arn:aws:kms:us-east-1:000000000000:key/71c6076a-f1eb-4a49-b198-26b106
 ```bash
 aws $EP s3 presign s3://$BUCKET/internal/roster.txt --expires-in 60
 ```
+<img width="972" height="208" alt="image" src="https://github.com/user-attachments/assets/9bce2cbe-b5cf-4904-bee3-1360664d02ab" />
 
-**Output:**
-
-```
-http://localhost:4566/mii-patient-records-7615/internal/roster.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test%2F20260910%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260910T215520Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=96261de5f4edff290560bedeebacabe551d093619b70201d65411eaf92c1afa2
-```
 
 #### Step 6.2 — Access the URL before expiry
 
@@ -576,13 +458,6 @@ http://localhost:4566/mii-patient-records-7615/internal/roster.txt?X-Amz-Algorit
 URL='http://localhost:4566/mii-patient-records-7615/internal/roster.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=test%2F20260910%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260910T215520Z&X-Amz-Expires=60&X-Amz-SignedHeaders=host&X-Amz-Signature=96261de5f4edff290560bedeebacabe551d093619b70201d65411eaf92c1afa2'
 
 curl -s -w ' <- HTTP %{http_code}\n' "$URL"
-```
-
-**Output:**
-
-```
-Staff duty schedule, week 12
- <- HTTP 200
 ```
 
 #### Step 6.3 — Wait for expiry and retry
@@ -593,11 +468,7 @@ sleep 65
 curl -s -o /dev/null -w 'after expiry: HTTP %{http_code}\n' "$URL"
 ```
 
-**Output:**
-
-```
-after expiry: HTTP 403
-```
+<img width="972" height="449" alt="image" src="https://github.com/user-attachments/assets/033ad0da-6de5-40fe-b4f7-2fd601d1a39b" />
 
 #### Step 6.4 — The condition-key trap
 
@@ -626,18 +497,9 @@ aws $EP s3api delete-bucket-policy --bucket $BUCKET
 ```
 
 **Output:**
+<img width="644" height="794" alt="image" src="https://github.com/user-attachments/assets/ed16a13d-02f3-4d82-9f46-c92de2a6c558" />
+<img width="884" height="976" alt="image" src="https://github.com/user-attachments/assets/a53eb849-70bd-4408-8163-36e33ee30437" />
 
-```
-An error occurred (AccessDenied) when calling the ListObjectsV2 operation: Access Denied
-```
-
-#### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task6-presigned-success.png` | Presigned URL returning HTTP 200 before expiry |
-| `task6-presigned-expired.png` | Same URL returning HTTP 403 after expiry |
-| `task6-secure-transport-lockout.png` | `list-objects-v2` denied by the `aws:SecureTransport` policy |
 
 **Report explanation — what each presigned URL parameter binds:**
 
@@ -671,14 +533,6 @@ aws $EP s3api put-bucket-versioning --bucket $BUCKET \
 aws $EP s3api get-bucket-versioning --bucket $BUCKET
 ```
 
-**Output:**
-
-```json
-{
-    "Status": "Enabled"
-}
-```
-
 #### Step 7.2 — Create two more revisions
 
 ```bash
@@ -701,17 +555,8 @@ aws $EP s3api list-object-versions --bucket $BUCKET \
 ```
 
 **Output:**
+<img width="909" height="775" alt="image" src="https://github.com/user-attachments/assets/05e640ed-a324-4f38-97e3-211983dd083d" />
 
-```
---------------------------------------------------------------
-|                     ListObjectVersions                     |
-+--------------------------+----------+---------------------+
-|  null                    |  False   |  48                 |
-|  AaCNWmu_KZIAKQ4ky4.5omAPwxrWvrSq |  False | 43          |
-|  AaCNWmu956G2MxXtLuPKN9zgVo8jvAvd |  False | 48          |
-|  AaCNWmu8JoL8.94bg97p9IZdwg780W1S |  True  | 43          |
-+--------------------------+----------+---------------------+
-```
 
 > The oldest entry is listed with version ID `null` — that is the copy uploaded in Task 1, **before versioning existed**.
 
@@ -729,26 +574,10 @@ aws $EP s3api list-object-versions --bucket $BUCKET \
   --query 'DeleteMarkers[].[VersionId,IsLatest]' --output table
 ```
 
-**Output:**
-
-```
-------------------------------------------------------
-|                  ListObjectVersions                |
-+--------------------------------------+-----------+
-|  AaCNWmu_RpOEu82XtPFIH4oeJ_CYMWhG    |  True     |
-+--------------------------------------+-----------+
-```
-
 #### Step 7.6 — Confirm the object is "gone" to an ordinary reader
 
 ```bash
 aws $EP s3api get-object --bucket $BUCKET --key confidential/record.txt gone.txt
-```
-
-**Output:**
-
-```
-An error occurred (NoSuchKey) when calling the GetObject operation: The specified key does not exist.
 ```
 
 #### Step 7.7 — Recover the original unredacted record
@@ -761,10 +590,8 @@ cat recovered.txt
 ```
 
 **Output:**
+<img width="972" height="839" alt="image" src="https://github.com/user-attachments/assets/521af672-c2f0-4fc5-ab09-7c3b58100a67" />
 
-```
-Patient: Ahmad bin Ali, Diagnosis: confidential
-```
 
 #### Step 7.8 — Permanent, per-version deletion
 
@@ -778,25 +605,8 @@ aws $EP s3api list-object-versions --bucket $BUCKET \
 ```
 
 **Output:**
+<img width="848" height="584" alt="image" src="https://github.com/user-attachments/assets/ee4f10ee-447a-45e4-8749-caaf459fdcda" />
 
-```
---------------------------------------------------------------
-|                     ListObjectVersions                     |
-+--------------------------------------+---------------------+
-|  AaCNWmu_KZIAKQ4ky4.5omAPwxrWvrSq   |  43                 |
-|  AaCNWmu956G2MxXtLuPKN9zgVo8jvAvd   |  48                 |
-|  AaCNWmu8JoL8.94bg97p9IZdwg780W1S   |  43                 |
-+--------------------------------------+---------------------+
-```
-
-#### Evidence
-
-| Screenshot | Description |
-|---|---|
-| `task7-version-listing.png` | `list-object-versions` showing all versions |
-| `task7-delete-marker.png` | Delete marker as the current version |
-| `task7-recovered.png` | `recovered.txt` containing the original diagnosis |
-| `task7-permanent-deletion.png` | Per-version deletion of `null` version |
 
 > **Caution:** `recovered.txt` contains the original diagnosis — the data you redacted in v3 and then deleted. This is **object-level data remanence**, and it is why "we deleted the record" is not an acceptable answer to a data-subject erasure request under a privacy regime such as the PDPA or GDPR. Removing it for real requires deleting **every version by ID**.
 
@@ -827,26 +637,18 @@ aws $EP s3api put-bucket-lifecycle-configuration --bucket $BUCKET \
   --lifecycle-configuration file://lifecycle.json
 
 aws $EP s3api get-bucket-lifecycle-configuration --bucket $BUCKET \
-  --query 'Rules[0].[ID,Status]' --output text
+  --query 'Rules[0].[ID,Status]' --output table
 ```
 
 **Output:**
+<img width="828" height="835" alt="image" src="https://github.com/user-attachments/assets/3f901dee-72d5-44aa-bab7-1ebd427954c3" />
 
-```
-RetireConfidentialRecords    Enabled
-```
 
 #### Step 8.2 — Cryptographic erasure: disable and schedule deletion of the KMS key
 
 ```bash
 aws $EP kms describe-key --key-id $KEY_ID \
   --query 'KeyMetadata.[KeyId,KeyState,Enabled]' --output text
-```
-
-**Output:**
-
-```
-71c6076a-f1eb-4a49-b198-26b10660c9d8    Enabled    True
 ```
 
 ```bash
@@ -857,12 +659,6 @@ aws $EP kms describe-key --key-id $KEY_ID \
   --query 'KeyMetadata.[KeyState,DeletionDate]' --output text
 ```
 
-**Output:**
-
-```
-PendingDeletion    2026-09-18T06:10:19.099085+08:00
-```
-
 #### Step 8.3 — Attempt to read an object encrypted under the disabled key
 
 ```bash
@@ -871,20 +667,8 @@ aws $EP s3api get-object --bucket $BUCKET \
 ```
 
 **Output (LocalStack may still return the object):**
+<img width="941" height="751" alt="image" src="https://github.com/user-attachments/assets/bed05265-433a-4644-b111-5874031d3f00" />
 
-```json
-{
-    "AcceptRanges": "bytes",
-    "Expiration": "expiry-date=\"Sat, 11 Sep 2027 00:00:00 GMT\", rule-id=\"RetireConfidentialRecords\"",
-    "LastModified": "2026-09-10T21:41:44+00:00",
-    "ContentLength": 48,
-    "ETag": "\"9a86d9c8a68fe26ab3f63cd85c116a7f\"",
-    "VersionId": "null",
-    "ServerSideEncryption": "aws:kms",
-    "SSEKMSKeyId": "arn:aws:kms:us-east-1:000000000000:key/71c6076a-f1eb-4a49-b198-26b10660c9d8",
-    "BucketKeyEnabled": true
-}
-```
 
 > **Verify or explain:** LocalStack may still return the object because it does not always re-check key state on read. If your read succeeds, demonstrate the same principle at the KMS layer instead — repeat the Lab 3 Task 6 sequence (`kms encrypt` → `disable-key` → `kms decrypt`) and attach the failed decrypt.
 
@@ -926,29 +710,6 @@ Overwriting assumes you can reliably reach and overwrite **every** copy of the d
 
 The `Evidence/` folder contains the following labelled screenshots and captured outputs:
 
-| File | Task | Description |
-|---|---|---|
-| `task1-list-objects.png` | 1 | `list-objects-v2` table showing all three objects |
-| `task1-confidential-tag.png` | 1 | `get-object-tagging` showing `classification=confidential` |
-| `task2-public-policy.png` | 2 | `public-policy.json` with `Principal: "*"` |
-| `task2-leaked-record.png` | 2 | Anonymous `curl` returning HTTP 200 and the leaked record |
-| `task3-bpa-config.png` | 3 | `get-public-access-block` showing all four flags `true` |
-| `task3-retest.png` | 3 | Re-tested anonymous read after BPA |
-| `task4-analyst-iam.png` | 4 | Analyst IAM policy allowing `s3:GetObject` on `*` |
-| `task4-internal-allowed.png` | 4 | Internal object successfully retrieved |
-| `task4-confidential-denied.png` | 4 | Confidential object denied by bucket policy |
-| `task5-bucket-encryption.png` | 5 | `get-bucket-encryption` showing `aws:kms` and key ID |
-| `task5-head-object.png` | 5 | `head-object` showing `aws:kms` and `BucketKeyEnabled=True` |
-| `task6-presigned-success.png` | 6 | Presigned URL returning HTTP 200 before expiry |
-| `task6-presigned-expired.png` | 6 | Same URL returning HTTP 403 after expiry |
-| `task6-secure-transport-lockout.png` | 6 | `list-objects-v2` denied by `aws:SecureTransport` policy |
-| `task7-version-listing.png` | 7 | `list-object-versions` showing all versions |
-| `task7-delete-marker.png` | 7 | Delete marker as the current version |
-| `task7-recovered.png` | 7 | `recovered.txt` containing the original diagnosis |
-| `task7-permanent-deletion.png` | 7 | Per-version deletion of the `null` version |
-| `task8-lifecycle-rules.png` | 8 | Lifecycle rules table |
-| `task8-key-state.png` | 8 | `describe-key` showing `PendingDeletion` |
-| `task8-failed-decrypt.png` | 8 | KMS decrypt failing under disabled key |
 
 ---
 
@@ -1097,13 +858,8 @@ aws $EP s3api get-bucket-lifecycle-configuration --bucket $BUCKET \
 
 **Output:**
 
-```
-=== IKB42603 Lab 6 verification: mii-patient-records-7615 ===
-True	True	True	True
-Enabled
-aws:kms	arn:aws:kms:us-east-1:000000000000:key/71c6076a-f1eb-4a49-b198-26b10660c9d8
-RetireConfidentialRecords	Enabled
-```
+<img width="1120" height="606" alt="image" src="https://github.com/user-attachments/assets/3b4ca102-a1aa-4130-aec0-19e8678505c9" />
+
 
 **Interpretation:**
 
@@ -1131,39 +887,7 @@ RetireConfidentialRecords	Enabled
 
 ---
 
-## 10. Cleanup & Teardown
 
-A versioned bucket cannot be emptied with `s3 rb --force` — that command ignores noncurrent versions and delete markers, and the bucket deletion fails with `BucketNotEmpty`. This is the same lesson as Task 7, one last time: you must remove every version explicitly.
-
-```bash
-# Remove the bucket policy
-aws $EP s3api delete-bucket-policy --bucket $BUCKET
-
-# Delete all object versions, then all delete markers
-aws $EP s3api delete-objects --bucket $BUCKET --delete "$(aws $EP s3api \
-  list-object-versions --bucket $BUCKET --output json \
-  --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}')"
-
-aws $EP s3api delete-objects --bucket $BUCKET --delete "$(aws $EP s3api \
-  list-object-versions --bucket $BUCKET --output json \
-  --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}')"
-
-# The bucket is only now genuinely empty
-aws $EP s3api list-object-versions --bucket $BUCKET --output text
-
-# Delete the bucket
-aws $EP s3api delete-bucket --bucket $BUCKET
-
-# Delete the IAM user and policy
-aws $EP iam delete-user-policy --user-name DataAnalyst --policy-name S3ReadAll
-aws $EP iam delete-user --user-name DataAnalyst
-
-# Remove the LocalStack container
-docker rm -f localstack
-
-# Remove temporary files
-rm -f *.json *.txt
-```
 
 ---
 
