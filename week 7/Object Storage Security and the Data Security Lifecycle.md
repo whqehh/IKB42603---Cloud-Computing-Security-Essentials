@@ -28,7 +28,7 @@
 7. [Verification Command Output](#8-verification-command-output)
 8. [Security Best-Practices Checklist](#9-security-best-practices-checklist)
 9. [Reflection & Lessons Learned](#11-reflection--lessons-learned)
-10. [Lab 2.1]()
+10. [Lab 2.1](https://github.com/whqehh/IKB42603---Cloud-Computing-Security-Essentials/blob/main/week%207/Lab_2.1.md)
 11. [Lab 5.1]()
 
 ---
