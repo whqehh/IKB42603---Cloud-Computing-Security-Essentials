@@ -86,7 +86,7 @@ kubectl create namespace tenant-a
 kubectl create namespace tenant-b
 ```
 
-![Namespaces created](<img width="943" height="373" alt="image" src="https://github.com/user-attachments/assets/dc22d691-1c38-4527-a24f-05328c397c3d" />)
+<img width="943" height="373" alt="image" src="https://github.com/user-attachments/assets/44a37c4c-971c-458e-afbe-c3a866e18aab" />
 *Figure 1: `tenant-a` and `tenant-b` namespaces created successfully.*
 
 ```bash
@@ -98,7 +98,7 @@ kubectl -n tenant-b expose deployment web --port=80
 kubectl get pods,svc -n tenant-a
 ```
 
-![Deployments and services](<img width="943" height="486" alt="image" src="https://github.com/user-attachments/assets/9329902a-0014-48ae-98af-95d030780978" />)
+<img width="943" height="486" alt="image" src="https://github.com/user-attachments/assets/9329902a-0014-48ae-98af-95d030780978" />
 *Figure 2: nginx deployments and services exposed in both tenant namespaces.*
 
 ### 2.3 Observe the Default-Open Risk (Lab 2 Refresher)
@@ -144,8 +144,7 @@ EOF
 kubectl describe resourcequota tenant-a-quota -n tenant-a
 ```
 
-![Resource quota](<img width="531" height="410" alt="image" src="https://github.com/user-attachments/assets/2053d618-76d4-4e62-bd07-f3b982f81246" /><img width="839" height="315" alt="image" src="https://github.com/user-attachments/assets/645ed9f9-52fd-4f49-a32a-69de0fb4a87a" />
-)
+<img width="531" height="410" alt="image" src="https://github.com/user-attachments/assets/2053d618-76d4-4e62-bd07-f3b982f81246" /><img width="839" height="315" alt="image">
 *Figure 3: ResourceQuota applied to `tenant-a` limiting CPU, memory, and pod count.*
 
 ### 2.5 Default-Deny Ingress (Lab 2 Session B — Context for Z1)
@@ -328,20 +327,6 @@ kubectl -n tenant-a run probe --rm -it --restart=Never --image=busybox:1.36 -- \
 > ```
 >
 > **For your report:** Capture the failure, then restore the rule. The difference between no route and no name resolution is one you will diagnose for the rest of your career.
-
-### 3.6 Evidence for Z1
-
-| # | Evidence | Command / Result |
-|---|----------|-----------------|
-| Z1-a | Cross-tenant egress **reachable before** policy | `HTTP 200` from §2.3 baseline |
-| Z1-b | Cross-tenant egress **BLOCKED after** policy | `BLOCKED` from §3.3 |
-| Z1-c | In-namespace probe **still succeeds** | `HTTP 200` / content from §3.4 (with `api` service present) |
-| Z1-d | DNS-rule-removed failure | `bad address` from §3.5 |
-| Z1-e | Both policies listed | `kubectl -n tenant-a get networkpolicy` from §3.2 |
-
-![Z1 evidence](https://i.imgur.com/placeholder-z1-evidence.png)
-*Figure 5: Z1 evidence — egress policies applied, cross-tenant blocked, in-namespace permitted.*
-
 ---
 
 ## 4. Task Z2 — Admission Control: Refuse the Workload Outright
@@ -357,9 +342,7 @@ kubectl label namespace tenant-a \
   pod-security.kubernetes.io/warn=restricted \
   --overwrite
 ```
-
-![Namespace labeled](<img width="921" height="246" alt="image" src="https://github.com/user-attachments/assets/12734761-2b23-411e-8661-bb04b775e0e3" />
-)
+<img width="921" height="246" alt="image" src="https://github.com/user-attachments/assets/12734761-2b23-411e-8661-bb04b775e0e3" />
 *Figure 6: Namespace labeled with restricted Pod Security Standard. Existing pods generate warnings but are not evicted.*
 
 ```bash
@@ -608,8 +591,7 @@ compliant-probe   1/1     Running   0          14m
 web-7c56dcdb9b-z84vq   1/1     Running   0          72m
 ```
 
-![Verification output](<img width="943" height="413" alt="image" src="https://github.com/user-attachments/assets/37eb9fd5-b0dc-4cfa-9871-b72833f2fa74" />
-)
+<img width="943" height="413" alt="image" src="https://github.com/user-attachments/assets/37eb9fd5-b0dc-4cfa-9871-b72833f2fa74" />
 *Figure 9: Verification command output showing egress policies, Pod Security labels, and running pods.*
 
 > **Note:** The `custom-columns` error in the screenshot (`unable to match a printer suitable for the output format "custom-"`) is a known `kubectl` parsing issue when the format string is broken across lines. Ensure the command is on a single line or properly escaped. The actual verification succeeds — the policies and labels are present.
